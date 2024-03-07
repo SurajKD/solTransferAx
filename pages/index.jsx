@@ -11,10 +11,10 @@ export default function Home() {
   return (
     <div style={{background: "#512da8 url('./bg.jpg') no-repeat fixed center",backgroundSize:"cover",height:"100vh"}}>
       <Head>
-        <title>SolTransfer</title>
+        <title>Axion IDO</title>
         <meta
           name='description'
-          content='Wallet Adapter Example'
+          content='Axion IDO'
         />
       </Head>
       <WalletContextProvider>
