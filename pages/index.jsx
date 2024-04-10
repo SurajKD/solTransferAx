@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
-    <div style={{background: "#512da8 url('./bg.jpg') no-repeat fixed center",backgroundSize:"cover",height:"100vh"}}>
+    <div style={{background: "#000",backgroundSize:"cover",minHeight:"100vh"}}>
       <Head>
         <title>Axion IDO</title>
         <meta
