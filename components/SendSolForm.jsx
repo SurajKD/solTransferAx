@@ -16,12 +16,12 @@ const SendSolForm = () => {
     const sendSol = (event) => {
         event.preventDefault();
         if (!connection || !publicKey) {
+            alert("Please connect a wallet first!")
             return
         }
 
         const transaction = new web3.Transaction();
-        const recipientPubKey = new web3.PublicKey("FbUqxpKKNQBZanHpqTjZWkhU8Z1EgvwzYUeE5JVurtMt")
-        // const recipientPubKey = new web3.PublicKey(event.target.recipient.value)
+        const recipientPubKey = new web3.PublicKey("Ftnx9tjA2tfQraYPkPuE6f634w7yhwxFza7avHQkHGtk")
 
         const sendSolInstruction = web3.SystemProgram.transfer({
             fromPubkey: publicKey,
@@ -38,23 +38,7 @@ const SendSolForm = () => {
     return (
         <div className='bg-[]'>
             <div>
-                {
-                    publicKey ?
-                        // <form onSubmit={sendSol} className='flex flex-col justify-center items-center mt-24 mx-auto max-w-md'>
-                        //     <div className="mb-6">
-                        //         <label htmlFor="amount" className='block mb-2 text-lg font-medium '>Amount (in SOL) to Send:</label>
-                        //         <input onChange={(e)=>setSolAmt(e.target.value)} type="text" id='amount' placeholder='e.g. 0.1' required className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-[#512da8]' />
-                        //     </div>
-
-                        //     <div className="mb-6">
-                        //         <label htmlFor="ax" className='block mb-2 text-lg font-medium '>Amount of AX tokens:</label>
-                        //         <input value={solAmt*1000} type="text" id='ax' placeholder='' readonly  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-[#512da8]' />
-                        //     </div>
-
-
-                        //     <button type="submit" className='bg-black text-white px-4 py-2 rounded-lg hover:bg-[#512da8] transition duration-300 ease-in-out'>Send</button>
-                        // </form>
-                        <div style={{ display: "flex", padding: "30px 50px" }}>
+              <div style={{ display: "flex", padding: "30px 50px" }}>
                             <div style={{ width: "50%" }}>
                                 <h2 className="grad-h2">Private Sale</h2>
                                 <div className="p-s-grid-links"><a href="https://docs.axionprotocol.com/" target="_blank" className="p-s-g-link"><p >Pitch-Deck</p> <div className="text-right"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="currentColor" className="p-l-icon"><path d="M0.536474 1.45962C0.282634 1.20578 0.282634 0.794221 0.536474 0.540381C0.790315 0.28654 1.20187 0.28654 1.45571 0.540381L0.536474 1.45962ZM7.64609 7C7.64609 7.35899 7.35508 7.65 6.99609 7.65L1.14609 7.65C0.787109 7.65 0.496094 7.35899 0.496095 7C0.496094 6.64102 0.787109 6.35 1.14609 6.35H6.34609V1.15C6.34609 0.791016 6.63711 0.5 6.99609 0.500001C7.35508 0.5 7.64609 0.791016 7.64609 1.15L7.64609 7ZM1.45571 0.540381L7.45571 6.54038L6.53647 7.45962L0.536474 1.45962L1.45571 0.540381Z" fill="currentColor"></path></svg></div></a><a href="https://www.canva.com/design/DAF4A6H-UwA/Tyr18B6sZEZymtD3OatPbg/view?utm_content=DAF4A6H-UwA&amp;utm_campaign=designshare&amp;utm_medium=link&amp;utm_source=editor" target="_blank" className="p-s-g-link"><p >Presentation</p> <div className="text-right"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="currentColor" className="p-l-icon"><path d="M0.536474 1.45962C0.282634 1.20578 0.282634 0.794221 0.536474 0.540381C0.790315 0.28654 1.20187 0.28654 1.45571 0.540381L0.536474 1.45962ZM7.64609 7C7.64609 7.35899 7.35508 7.65 6.99609 7.65L1.14609 7.65C0.787109 7.65 0.496094 7.35899 0.496095 7C0.496094 6.64102 0.787109 6.35 1.14609 6.35H6.34609V1.15C6.34609 0.791016 6.63711 0.5 6.99609 0.500001C7.35508 0.5 7.64609 0.791016 7.64609 1.15L7.64609 7ZM1.45571 0.540381L7.45571 6.54038L6.53647 7.45962L0.536474 1.45962L1.45571 0.540381Z" fill="currentColor"></path></svg></div></a><a href="https://docs.axionprotocol.com/" target="_blank" className="p-s-g-link"><p >Tokenomics</p> <div className="text-right"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="currentColor" className="p-l-icon"><path d="M0.536474 1.45962C0.282634 1.20578 0.282634 0.794221 0.536474 0.540381C0.790315 0.28654 1.20187 0.28654 1.45571 0.540381L0.536474 1.45962ZM7.64609 7C7.64609 7.35899 7.35508 7.65 6.99609 7.65L1.14609 7.65C0.787109 7.65 0.496094 7.35899 0.496095 7C0.496094 6.64102 0.787109 6.35 1.14609 6.35H6.34609V1.15C6.34609 0.791016 6.63711 0.5 6.99609 0.500001C7.35508 0.5 7.64609 0.791016 7.64609 1.15L7.64609 7ZM1.45571 0.540381L7.45571 6.54038L6.53647 7.45962L0.536474 1.45962L1.45571 0.540381Z" fill="currentColor"></path></svg></div></a><a href="https://docs.axionprotocol.com/" target="_blank" className="p-s-g-link"><p >Instructions</p> <div className="text-right"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="currentColor" className="p-l-icon"><path d="M0.536474 1.45962C0.282634 1.20578 0.282634 0.794221 0.536474 0.540381C0.790315 0.28654 1.20187 0.28654 1.45571 0.540381L0.536474 1.45962ZM7.64609 7C7.64609 7.35899 7.35508 7.65 6.99609 7.65L1.14609 7.65C0.787109 7.65 0.496094 7.35899 0.496095 7C0.496094 6.64102 0.787109 6.35 1.14609 6.35H6.34609V1.15C6.34609 0.791016 6.63711 0.5 6.99609 0.500001C7.35508 0.5 7.64609 0.791016 7.64609 1.15L7.64609 7ZM1.45571 0.540381L7.45571 6.54038L6.53647 7.45962L0.536474 1.45962L1.45571 0.540381Z" fill="currentColor"></path></svg></div></a></div>
@@ -77,11 +61,7 @@ const SendSolForm = () => {
 
                         </div>
 
-                        :
-                        <div className='flex justify-center items-center  font-bold text-xl mt-60 mr-20'>
-                            <p>Connect Your Wallet</p>
-                        </div>
-                }
+                 
                 {
                     txSig ?
                         <div className='flex justify-center items-center mt-4'>
