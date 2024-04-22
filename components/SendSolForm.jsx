@@ -1,17 +1,18 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { FC, useState } from 'react'
+import { FC, useState, useEffect } from 'react'
 
 
 const SendSolForm = () => {
     const [txSig, setTxSig] = useState('')
     const [solAmt, setSolAmt] = useState('')
     const [countdown, setCountdown] = useState('')
+    const [prevTransactions, setPrevTransactions] = useState([])
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
     const link = () => {
-        return txSig ? `https://explorer.axionprotocol.com//tx/${txSig}?cluster=devnet` : ''
+        return txSig ? `https://explorer.axionprotocol.com/tx/${txSig}?cluster=devnet` : ''
     }
     const addRecAx = async (walletAddr, sent, given) => {
         let data = { "wallet_address": walletAddr, "sol_sent": sent, "ax_given": given }
@@ -21,7 +22,7 @@ const SendSolForm = () => {
                 body: JSON.stringify(data),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             })
-            json = await response.json();
+            let json = await response.json();
         } catch (error) {
             if (error instanceof SyntaxError) {
                 // Unexpected token < in JSON
@@ -32,6 +33,30 @@ const SendSolForm = () => {
         }
 
     }
+    const getPrevRec = async () => {
+        try {
+            const response = await fetch(`https://block.axionprotocol.com/presale-logs.json?wallet_address__iexact=${publicKey}`, {
+                method: "GET",
+                headers: { "Content-type": "application/json; charset=UTF-8" }
+            })
+            let json = await response.json();
+            setPrevTransactions(json);
+        } catch (error) {
+            if (error instanceof SyntaxError) {
+                // Unexpected token < in JSON
+                console.log('There was a SyntaxError', error);
+            } else {
+                console.log('There was an error', error);
+            }
+        }
+    }
+    useEffect(() => {
+        if (publicKey) {
+            getPrevRec()
+        } else {
+            setPrevTransactions([])
+        }
+    }, [publicKey])
     const sendSol = (event) => {
         event.preventDefault();
         if (!connection || !publicKey) {
@@ -89,13 +114,13 @@ const SendSolForm = () => {
     return (
         <div className='bg-[]'>
             <div>
-                <div style={{ display: "flex", padding: "30px 50px" }}>
-                    <div style={{ width: "50%" }}>
+                <div className='homeSale'>
+                    <div >
                         <h2 className="grad-h2">Private Sale</h2>
                         <div className="p-s-grid-links"><a href="https://docs.axionprotocol.com/" target="_blank" className="p-s-g-link"><p >Pitch-Deck</p> <div className="text-right"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="currentColor" className="p-l-icon"><path d="M0.536474 1.45962C0.282634 1.20578 0.282634 0.794221 0.536474 0.540381C0.790315 0.28654 1.20187 0.28654 1.45571 0.540381L0.536474 1.45962ZM7.64609 7C7.64609 7.35899 7.35508 7.65 6.99609 7.65L1.14609 7.65C0.787109 7.65 0.496094 7.35899 0.496095 7C0.496094 6.64102 0.787109 6.35 1.14609 6.35H6.34609V1.15C6.34609 0.791016 6.63711 0.5 6.99609 0.500001C7.35508 0.5 7.64609 0.791016 7.64609 1.15L7.64609 7ZM1.45571 0.540381L7.45571 6.54038L6.53647 7.45962L0.536474 1.45962L1.45571 0.540381Z" fill="currentColor"></path></svg></div></a><a href="https://www.canva.com/design/DAF4A6H-UwA/Tyr18B6sZEZymtD3OatPbg/view?utm_content=DAF4A6H-UwA&amp;utm_campaign=designshare&amp;utm_medium=link&amp;utm_source=editor" target="_blank" className="p-s-g-link"><p >Presentation</p> <div className="text-right"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="currentColor" className="p-l-icon"><path d="M0.536474 1.45962C0.282634 1.20578 0.282634 0.794221 0.536474 0.540381C0.790315 0.28654 1.20187 0.28654 1.45571 0.540381L0.536474 1.45962ZM7.64609 7C7.64609 7.35899 7.35508 7.65 6.99609 7.65L1.14609 7.65C0.787109 7.65 0.496094 7.35899 0.496095 7C0.496094 6.64102 0.787109 6.35 1.14609 6.35H6.34609V1.15C6.34609 0.791016 6.63711 0.5 6.99609 0.500001C7.35508 0.5 7.64609 0.791016 7.64609 1.15L7.64609 7ZM1.45571 0.540381L7.45571 6.54038L6.53647 7.45962L0.536474 1.45962L1.45571 0.540381Z" fill="currentColor"></path></svg></div></a><a href="https://docs.axionprotocol.com/" target="_blank" className="p-s-g-link"><p >Tokenomics</p> <div className="text-right"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="currentColor" className="p-l-icon"><path d="M0.536474 1.45962C0.282634 1.20578 0.282634 0.794221 0.536474 0.540381C0.790315 0.28654 1.20187 0.28654 1.45571 0.540381L0.536474 1.45962ZM7.64609 7C7.64609 7.35899 7.35508 7.65 6.99609 7.65L1.14609 7.65C0.787109 7.65 0.496094 7.35899 0.496095 7C0.496094 6.64102 0.787109 6.35 1.14609 6.35H6.34609V1.15C6.34609 0.791016 6.63711 0.5 6.99609 0.500001C7.35508 0.5 7.64609 0.791016 7.64609 1.15L7.64609 7ZM1.45571 0.540381L7.45571 6.54038L6.53647 7.45962L0.536474 1.45962L1.45571 0.540381Z" fill="currentColor"></path></svg></div></a><a href="https://docs.axionprotocol.com/" target="_blank" className="p-s-g-link"><p >Instructions</p> <div className="text-right"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="currentColor" className="p-l-icon"><path d="M0.536474 1.45962C0.282634 1.20578 0.282634 0.794221 0.536474 0.540381C0.790315 0.28654 1.20187 0.28654 1.45571 0.540381L0.536474 1.45962ZM7.64609 7C7.64609 7.35899 7.35508 7.65 6.99609 7.65L1.14609 7.65C0.787109 7.65 0.496094 7.35899 0.496095 7C0.496094 6.64102 0.787109 6.35 1.14609 6.35H6.34609V1.15C6.34609 0.791016 6.63711 0.5 6.99609 0.500001C7.35508 0.5 7.64609 0.791016 7.64609 1.15L7.64609 7ZM1.45571 0.540381L7.45571 6.54038L6.53647 7.45962L0.536474 1.45962L1.45571 0.540381Z" fill="currentColor"></path></svg></div></a></div>
                         <div className="g-p-subs"><p >Please note that you are using the Binance Smart Chain (BEP20) network for your investment and make sure to verify the address on the website: <a href="https://docs.axionprotocol.com/" target="_blank" className="private-sale-link">axionprotocol.com</a>. If you make a mistake, the tokens will not be credited to your account.</p> <p className="private-sale-link">See Step-by-Step Guide&gt;</p> <br /> <p >To ensure that coins have been received, perform a test purchase for the minimum amount, then go to <a className="private-sale-link">personal account</a> and check your balance.</p></div>
                     </div>
-                    <div style={{ width: "50%" }}>
+                    <div>
                         <div className="g-pre-seed"><div className="g-p-s-head"><p >Ends in:</p> <p className="private-timer" style={{ color: "rgb(255, 255, 255)" }}>{countdown}</p></div> <div className="g-p-s-content"><p className="g-p-title">Pre-seed sale</p> <div className="g-p-label"><span >LIMITED EMISSION</span></div> <p className="g-p-total-collected-title">Total Collected:</p> <p className="g-p-total-collected"><span >$304,546</span> <span >&nbsp;/ $855,000</span></p> <div className="g-p-progress-info"><div className="progress_sale__row"><div className="progress_sale"><div className="progress_range" style={{ width: "35%" }}></div> <span className="g-p-softcap-arrow" style={{ left: "66.5497%" }}></span></div></div> <p className="g-p-soft-cap" style={{ left: "66.5497%" }}>Softcap: <span >$569,000</span></p></div> <div className="g-p-grid"><div ><p className="g-p-total-collected-title"><span >Pre-seed</span> price</p> <p className="g-p-grid-text">$0.009</p></div> <div ><p className="g-p-total-collected-title">Token Amount</p> <p className="g-p-grid-text">61M/95M AX</p></div></div>
                             <form onSubmit={sendSol}>
                                 <div className="m-p-input-wrapper m-p-i-w-first" style={{ margin: "0px", borderBottom: "1px solid rgb(218, 224, 239)" }}><p className="p-i-label">Give:</p> <div className="input-prefix-w">
@@ -128,6 +153,37 @@ const SendSolForm = () => {
                     </div>
 
                 </div>
+                {
+                    prevTransactions.length > 0 &&
+                    <div class="transactionBox">
+                        <h2>Previous transactions</h2>
+                        <div style={{ overflow: "auto" }}>
+                            <table>
+                                <tr>
+                                    <th>Sr. no.</th>
+                                    <th>SOL sent</th>
+                                    <th>AX received</th>
+                                    <th>Transaction time</th>
+                                </tr>
+                                {
+                                    prevTransactions.map((val, index) => {
+                                        const date = new Date(val.created_at);
+                                        return (<tr>
+                                            <td>{index + 1}</td>
+                                            <td>{val.sol_sent}</td>
+                                            <td>{val.ax_given}</td>
+                                            <td>{date.toLocaleString()}</td>
+                                        </tr>)
+                                    }
+                                    )
+                                }
+
+
+                            </table>
+
+                        </div>
+                    </div>
+                }
 
 
                 {

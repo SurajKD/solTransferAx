@@ -834,7 +834,25 @@ button, input, select, textarea {
 .mob {
     display: none
 }
-
+.homeSale{
+    display: flex; padding: 30px 50px;
+}
+.homeSale>div{
+    width: 50%;
+}
+.transactionBox{
+    color: white;
+    padding: 30px 50px;
+    text-align: center;
+}
+.transactionBox table{
+    width: 80%;
+    margin: 30px auto;
+}
+.transactionBox th,.transactionBox td{
+    border: 1px solid #1a1a1a;
+    padding: 3px 6px;
+}
 @media(max-width:1450px) {
      .p-link-tg {
         right: 35px
@@ -867,6 +885,12 @@ button, input, select, textarea {
 }
 
 @media(max-width:630px) {
+    .homeSale{
+        display: block;
+    }
+    .homeSale>div{
+        width: 100%;
+    }
      .p-link-tg {
         bottom: 35px;
         height: 55px;
@@ -978,7 +1002,7 @@ button, input, select, textarea {
      .g-pre-seed .g-p-s-content .m-p-input-wrapper .m-p-max.mob {
         display: inline;
         display: initial;
-        left: 0;
+        right: 0;
         position: absolute;
         z-index: 0
     }
