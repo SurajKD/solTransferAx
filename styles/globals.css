@@ -336,7 +336,7 @@ button, input, select, textarea {
 
  h2 {
     -webkit-text-fill-color: transparent;
-    background: linear-gradient(91deg, #fff 48.21%, #f020508f 98.39%);
+    background: linear-gradient(91deg, #fff 48.21%, #f02050 98.39%);
     background-clip: text;
     -webkit-background-clip: text;
     display: inline-block;
