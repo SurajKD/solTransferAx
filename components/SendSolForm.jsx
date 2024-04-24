@@ -171,7 +171,7 @@ const SendSolForm = () => {
                                 {
                                     prevTransactions.map((val, index) => {
                                         const date = new Date(val.created_at);
-                                        return (<tr>
+                                        return (<tr key={val.id}>
                                             <td>{index + 1}</td>
                                             <td>{val.sol_sent}</td>
                                             <td>{val.ax_given}</td>
