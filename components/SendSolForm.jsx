@@ -125,11 +125,14 @@ const SendSolForm = () => {
                             <form onSubmit={sendSol}>
                                 <div className="m-p-input-wrapper m-p-i-w-first" style={{ margin: "0px", borderBottom: "1px solid rgb(218, 224, 239)" }}><p className="p-i-label">Give:</p> <div className="input-prefix-w">
                                     <input type="number" step="0.01" value={solAmt} onChange={(e) => setSolAmt(e.target.value)} id='amount' placeholder='e.g. 0.1' required />
-                                    <p className="m-p-max mob"><span >0</span> SOL</p></div> <p className="m-p-max">SOL</p> <div className="dropdown_1"><div className="dropdown-btn"><img src="usdc.svg" className="dropdown-btn-icon" /></div></div>
+                                    <p className="m-p-max mob"><span >0</span> SOL</p></div> <p className="m-p-max">SOL</p> <div className="dropdown_1"><div className="dropdown-btn">
+                                        <img src="solana.svg" className="dropdown-btn-icon" />
+                                    </div></div>
                                 </div>
                                 <div className="m-p-input-wrapper"><p className="p-i-label">Receive:</p> <div className="input-prefix-w">
                                     <input value={solAmt * 1000} readOnly type="number" step="0.01" placeholder="0" />
-                                    <p className="m-p-max mob"><span >0</span> AX</p></div> <p className="m-p-max">AX</p> <div className="dropdown_1"><div className="dropdown-btn"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="currentColor" className="dropdown-btn-icon" style={{ color: "rgb(0, 0, 0)" }}><path d="M10.9682 24.9774C14.4526 22.0388 19.5477 22.0388 23.0322 24.9774L28.4202 29.5215C22.0652 35.4938 11.9351 35.4938 5.58008 29.5215L10.9682 24.9774Z" fill="currentColor"></path> <path d="M24.9774 23.0322C22.0388 19.5477 22.0388 14.4526 24.9774 10.9682L29.5215 5.58008C35.4938 11.9351 35.4938 22.0652 29.5215 28.4202L24.9774 23.0322Z" fill="currentColor"></path> <path d="M10.9682 9.02334C14.4526 11.962 19.5477 11.962 23.0322 9.02334L28.4202 4.47917C22.0652 -1.49306 11.9351 -1.49306 5.58008 4.47917L10.9682 9.02334Z" fill="currentColor"></path> <path d="M9.02334 23.0322C11.962 19.5477 11.962 14.4526 9.02334 10.9682L4.47917 5.58008C-1.49306 11.9351 -1.49306 22.0652 4.47917 28.4202L9.02334 23.0322Z" fill="currentColor"></path></svg></div></div>
+                                    <p className="m-p-max mob"><span >0</span> AX</p></div> <p className="m-p-max">AX</p> <div className="dropdown_1"><div className="dropdown-btn">
+                                        <img src="axionicon.svg" className="dropdown-btn-icon" />  </div></div>
                                 </div>
 
                                 <div className="error-enter-sum">Minimum investment amount is <span >1 SOL</span> or <span >1000 AX</span></div> <button className="btn-log-in" type="submit" disabled={!solAmt}> <span >Buy Tokens AX</span></button>
