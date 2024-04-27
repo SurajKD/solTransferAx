@@ -101,6 +101,7 @@ const SendSolForm = () => {
    console.log("kd",publicKey,"vx->",signTransaction)
     try {
       if (!publicKey || !signTransaction) {
+       
         throw new WalletNotConnectedError();
       }
       const mintToken = new PublicKey(
@@ -228,7 +229,11 @@ const SendSolForm = () => {
                                         <img src="axionicon.svg" className="dropdown-btn-icon" />  </div></div>
                                 </div>
 
-                                <div className="error-enter-sum">Minimum investment amount is <span >1 USDC</span> or <span >1000 AX</span></div> <button className="btn-log-in" onClick={()=>handlePayment()} disabled={!solAmt}> <span >Buy Tokens AX</span></button>
+                               {solAmt<50? <div className="error-enter-sum">*Minimum investment amount is <span >50 USDC</span> or <span >50000 AX</span></div>:""}
+                                {!publicKey? <div className="error-enter-sum">*Please connect your wallet before submission!</div>:""}
+                               
+                               
+                                 <button className="btn-log-in" onClick={()=>handlePayment()} disabled={solAmt<50||!publicKey}> <span >Buy Tokens AX</span></button><br/>
                             {/* </form> */}
                         </div>
                             {/* <div className="g-p-s-footer">
