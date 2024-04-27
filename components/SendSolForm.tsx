@@ -48,7 +48,7 @@ const SendSolForm = () => {
     const { connection } = useConnection();
     // const { publicKey, sendTransaction } = useWallet();
     const link = () => {
-        return txSig ? `https://explorer.axionprotocol.com/tx/${txSig}?cluster=devnet` : ''
+        return txSig ? `https://explorer.solana.com/tx/${txSig}` : ''
     }
     const addRecAx = async (walletAddr:any, sent:any, given:any) => {
         let data = { "wallet_address": walletAddr, "sol_sent": sent, "ax_given": given }
@@ -218,8 +218,8 @@ const SendSolForm = () => {
                             {/* <form > */}
                                 <div className="m-p-input-wrapper m-p-i-w-first" style={{ margin: "0px", borderBottom: "1px solid rgb(218, 224, 239)" }}><p className="p-i-label">Give:</p> <div className="input-prefix-w">
                                     <input type="number" step="0.01" value={solAmt} onChange={(e) => setSolAmt(e.target.value)} id='amount' placeholder='e.g. 0.1' required />
-                                    <p className="m-p-max mob"><span >0</span> SOL</p></div> <p className="m-p-max">SOL</p> <div className="dropdown_1"><div className="dropdown-btn">
-                                        <img src="solana.svg" className="dropdown-btn-icon" />
+                                    <p className="m-p-max mob"><span >0</span> USDC</p></div> <p className="m-p-max">USDC</p> <div className="dropdown_1"><div className="dropdown-btn">
+                                        <img src="usdc.svg" className="dropdown-btn-icon" />
                                     </div></div>
                                 </div>
                                 <div className="m-p-input-wrapper"><p className="p-i-label">Receive:</p> <div className="input-prefix-w">
@@ -228,7 +228,7 @@ const SendSolForm = () => {
                                         <img src="axionicon.svg" className="dropdown-btn-icon" />  </div></div>
                                 </div>
 
-                                <div className="error-enter-sum">Minimum investment amount is <span >1 SOL</span> or <span >1000 AX</span></div> <button className="btn-log-in" onClick={()=>handlePayment()} disabled={!solAmt}> <span >Buy Tokens AX</span></button>
+                                <div className="error-enter-sum">Minimum investment amount is <span >1 USDC</span> or <span >1000 AX</span></div> <button className="btn-log-in" onClick={()=>handlePayment()} disabled={!solAmt}> <span >Buy Tokens AX</span></button>
                             {/* </form> */}
                         </div>
                             {/* <div className="g-p-s-footer">
@@ -257,7 +257,7 @@ const SendSolForm = () => {
                             <table>
                                 <tr>
                                     <th>Sr. no.</th>
-                                    <th>SOL sent</th>
+                                    <th>USDC sent</th>
                                     <th>AX received</th>
                                     <th>Transaction time</th>
                                 </tr>
@@ -282,13 +282,13 @@ const SendSolForm = () => {
                 }
 
 
-                {/* {
+                {
                     txSig ?
                         <div className='flex justify-center items-center mt-4'>
-                            <a href={link()} className='font-normal hover:text-[#01c7ff]' style={{ color: "#fff" }}>View your transaction on- Axion Explorer 🚀</a>
+                            <a href={link()} className='font-normal hover:text-[#01c7ff]' style={{ color: "#fff" }}>View your transaction on- Solana Explorer 🚀</a>
                         </div> :
                         null
-                } */}
+                }
             </div>
         </div>
 
