@@ -2,19 +2,55 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as web3 from '@solana/web3.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { FC, useState, useEffect } from 'react'
+import {
+    WalletNotConnectedError,
+    SignerWalletAdapterProps
+  } from '@solana/wallet-adapter-base';
+//   import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+  import {
+    createTransferInstruction,
+    createAssociatedTokenAccountInstruction,
+    getAssociatedTokenAddress,
+    getAccount
+  } from '@solana/spl-token';
+  import {
+    PublicKey,
+    Transaction,
+    Connection,
+    TransactionInstruction
+  } from '@solana/web3.js';
 
+  export const configureAndSendCurrentTransaction = async (
+    transaction: Transaction,
+    connection: Connection,
+    feePayer: PublicKey,
+    signTransaction: SignerWalletAdapterProps['signTransaction']
+  ) => {
+    const blockHash = await connection.getLatestBlockhash();
+    transaction.feePayer = feePayer;
+    transaction.recentBlockhash = blockHash.blockhash;
+    const signed = await signTransaction(transaction);
+    const signature = await connection.sendRawTransaction(signed.serialize());
+    await connection.confirmTransaction({
+      blockhash: blockHash.blockhash,
+      lastValidBlockHeight: blockHash.lastValidBlockHeight,
+      signature
+    });
+    return signature;
+  };
+  
 
 const SendSolForm = () => {
-    const [txSig, setTxSig] = useState('')
-    const [solAmt, setSolAmt] = useState('')
-    const [countdown, setCountdown] = useState('')
-    const [prevTransactions, setPrevTransactions] = useState([])
+    const [txSig, setTxSig] = useState<any>('')
+    const [solAmt, setSolAmt] = useState<any>('')
+    const [countdown, setCountdown] = useState<any>('')
+    const [prevTransactions, setPrevTransactions] = useState<any>([])
     const { connection } = useConnection();
-    const { publicKey, sendTransaction } = useWallet();
+    // const { publicKey, sendTransaction } = useWallet();
     const link = () => {
         return txSig ? `https://explorer.axionprotocol.com/tx/${txSig}?cluster=devnet` : ''
     }
-    const addRecAx = async (walletAddr, sent, given) => {
+    const addRecAx = async (walletAddr:any, sent:any, given:any) => {
         let data = { "wallet_address": walletAddr, "sol_sent": sent, "ax_given": given }
         try {
             const response = await fetch('https://block.axionprotocol.com/presale-logs.json', {
@@ -50,6 +86,9 @@ const SendSolForm = () => {
             }
         }
     }
+
+
+    const { publicKey, signTransaction } = useWallet();
     useEffect(() => {
         if (publicKey) {
             getPrevRec()
@@ -57,30 +96,84 @@ const SendSolForm = () => {
             setPrevTransactions([])
         }
     }, [publicKey])
-    const sendSol = (event) => {
-        event.preventDefault();
-        if (!connection || !publicKey) {
-            alert("Please connect a wallet first!")
-            return
-        }
 
-        const transaction = new web3.Transaction();
-        const recipientPubKey = new web3.PublicKey("Ftnx9tjA2tfQraYPkPuE6f634w7yhwxFza7avHQkHGtk")
+  const handlePayment = async () => {
+   console.log("kd",publicKey,"vx->",signTransaction)
+    try {
+      if (!publicKey || !signTransaction) {
+        throw new WalletNotConnectedError();
+      }
+      const mintToken = new PublicKey(
+        '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'
+      ); // 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU is USDC token address on solana devnet
+      const recipientAddress = new PublicKey(
+        'H6oUNAkFWLzZ5NQxEoQP3Drq5zZe2wSe6WpDwN36sjEN'
+      );
 
-        const sendSolInstruction = web3.SystemProgram.transfer({
-            fromPubkey: publicKey,
-            toPubkey: recipientPubKey,
-            lamports: LAMPORTS_PER_SOL * event.target.amount.value
-        })
-
-        transaction.add(sendSolInstruction)
-        sendTransaction(transaction, connection).then((sig) => {
-            setTxSig(sig)
-            addRecAx(publicKey, solAmt, solAmt * 1000)
-            setSolAmt('')
-
-        })
+      const transactionInstructions: TransactionInstruction[] = [];
+      const associatedTokenFrom = await getAssociatedTokenAddress(
+        mintToken,
+        publicKey
+      );
+      const fromAccount = await getAccount(connection, associatedTokenFrom);
+      const associatedTokenTo = await getAssociatedTokenAddress(
+        mintToken,
+        recipientAddress
+      );
+      if (!(await connection.getAccountInfo(associatedTokenTo))) {
+        transactionInstructions.push(
+          createAssociatedTokenAccountInstruction(
+            publicKey,
+            associatedTokenTo,
+            recipientAddress,
+            mintToken
+          )
+        );
+      }
+      transactionInstructions.push(
+        createTransferInstruction(
+          fromAccount.address, // source
+          associatedTokenTo, // dest
+          publicKey,
+          solAmt*1000000 // transfer 1 USDC, USDC on solana devnet has 6 decimal
+        )
+      );
+      const transaction = new Transaction().add(...transactionInstructions);
+      const signature = await configureAndSendCurrentTransaction(
+        transaction,
+        connection,
+        publicKey,
+        signTransaction
+      );
+      // signature is transaction address, you can confirm your transaction on 'https://explorer.solana.com/?cluster=devnet'
+    } catch (error) {
+        console.log(error)
     }
+  };
+    // const sendSol = (event) => {
+    //     event.preventDefault();
+    //     if (!connection || !publicKey) {
+    //         alert("Please connect a wallet first!")
+    //         return
+    //     }
+
+    //     const transaction = new web3.Transaction();
+    //     const recipientPubKey = new web3.PublicKey("Ftnx9tjA2tfQraYPkPuE6f634w7yhwxFza7avHQkHGtk")
+
+    //     const sendSolInstruction = web3.SystemProgram.transfer({
+    //         fromPubkey: publicKey,
+    //         toPubkey: recipientPubKey,
+    //         lamports: LAMPORTS_PER_SOL * event.target.amount.value
+    //     })
+
+    //     transaction.add(sendSolInstruction)
+    //     sendTransaction(transaction, connection).then((sig) => {
+    //         setTxSig(sig)
+    //         addRecAx(publicKey, solAmt, solAmt * 1000)
+    //         setSolAmt('')
+
+    //     })
+    // }
 
     // Set the date we're counting down to
     var countDownDate = new Date("Apr 24, 2024 00:00:00").getTime();
@@ -122,7 +215,7 @@ const SendSolForm = () => {
                     </div>
                     <div>
                         <div className="g-pre-seed"><div className="g-p-s-head"><p >Ends in:</p> <p className="private-timer" style={{ color: "rgb(255, 255, 255)" }}>{countdown}</p></div> <div className="g-p-s-content"><p className="g-p-title">Pre-seed sale</p> <div className="g-p-label"><span >LIMITED EMISSION</span></div> <p className="g-p-total-collected-title">Total Collected:</p> <p className="g-p-total-collected"><span >$304,546</span> <span >&nbsp;/ $855,000</span></p> <div className="g-p-progress-info"><div className="progress_sale__row"><div className="progress_sale"><div className="progress_range" style={{ width: "35%" }}></div> <span className="g-p-softcap-arrow" style={{ left: "66.5497%" }}></span></div></div> <p className="g-p-soft-cap" style={{ left: "66.5497%" }}>Softcap: <span >$569,000</span></p></div> <div className="g-p-grid"><div ><p className="g-p-total-collected-title"><span >Pre-seed</span> price</p> <p className="g-p-grid-text">$0.009</p></div> <div ><p className="g-p-total-collected-title">Token Amount</p> <p className="g-p-grid-text">61M/95M AX</p></div></div>
-                            <form onSubmit={sendSol}>
+                            {/* <form > */}
                                 <div className="m-p-input-wrapper m-p-i-w-first" style={{ margin: "0px", borderBottom: "1px solid rgb(218, 224, 239)" }}><p className="p-i-label">Give:</p> <div className="input-prefix-w">
                                     <input type="number" step="0.01" value={solAmt} onChange={(e) => setSolAmt(e.target.value)} id='amount' placeholder='e.g. 0.1' required />
                                     <p className="m-p-max mob"><span >0</span> SOL</p></div> <p className="m-p-max">SOL</p> <div className="dropdown_1"><div className="dropdown-btn">
@@ -135,8 +228,8 @@ const SendSolForm = () => {
                                         <img src="axionicon.svg" className="dropdown-btn-icon" />  </div></div>
                                 </div>
 
-                                <div className="error-enter-sum">Minimum investment amount is <span >1 SOL</span> or <span >1000 AX</span></div> <button className="btn-log-in" type="submit" disabled={!solAmt}> <span >Buy Tokens AX</span></button>
-                            </form>
+                                <div className="error-enter-sum">Minimum investment amount is <span >1 SOL</span> or <span >1000 AX</span></div> <button className="btn-log-in" onClick={()=>handlePayment()} disabled={!solAmt}> <span >Buy Tokens AX</span></button>
+                            {/* </form> */}
                         </div>
                             {/* <div className="g-p-s-footer">
                                 <div >
@@ -158,7 +251,7 @@ const SendSolForm = () => {
                 </div>
                 {
                     prevTransactions.length > 0 &&
-                    <div class="transactionBox">
+                    <div className="transactionBox">
                         <h2>Previous transactions</h2>
                         <div style={{ overflow: "auto" }}>
                             <table>
@@ -169,7 +262,7 @@ const SendSolForm = () => {
                                     <th>Transaction time</th>
                                 </tr>
                                 {
-                                    prevTransactions.map((val, index) => {
+                                    prevTransactions.map((val:any, index:any) => {
                                         const date = new Date(val.created_at);
                                         return (<tr key={val.id}>
                                             <td>{index + 1}</td>
@@ -189,13 +282,13 @@ const SendSolForm = () => {
                 }
 
 
-                {
+                {/* {
                     txSig ?
                         <div className='flex justify-center items-center mt-4'>
                             <a href={link()} className='font-normal hover:text-[#01c7ff]' style={{ color: "#fff" }}>View your transaction on- Axion Explorer 🚀</a>
                         </div> :
                         null
-                }
+                } */}
             </div>
         </div>
 
